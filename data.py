@@ -22,23 +22,23 @@ class Pix2pixDataset(dataset_mixin.DatasetMixin):
         if len(files) <= 0:
             raise FileNotFoundError("no image file in the dir %s" % datadir)
         self.images = []
+        if cache:
+            for i in range(len(files)):
+                self.images.append(self._load(i))
 
     def __len__(self):
         return len(self.files)
 
+    def _load(self, i):
+        path = os.path.join(self.datadir, self.files[i])
+        img = Image.open(path)
+        img = np.asarray(img, dtype=np.float32)
+        img = img.transpose(2, 0, 1)
+        img /= 255.0
+        return img
     def load_image(self, i):
-        def _load(i):
-            path = os.path.join(self.datadir, self.files[i])
-            img = Image.open(path)
-            img = np.asarray(img, dtype=np.float32)
-            img = img.transpose(2, 0, 1)
-            img /= 255.0
-            return img
         if self.cache:
-            if len(self.images) >= (i+1):
-                img = _load(i)
-            else:
-                img = self.images[i]
+            img = self.images[i]
         else:
             img = _load(i)
         return img
