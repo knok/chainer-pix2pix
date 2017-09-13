@@ -75,7 +75,7 @@ def main():
     updater = FacadeUpdater(
         models=(enc, dec, dis),
         iterator={
-            'main': train_iter}
+            'main': train_iter},
         optimizer={
             'enc': opt_enc, 'dec': opt_dec, 
             'dis': opt_dis},
