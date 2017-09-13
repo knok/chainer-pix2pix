@@ -18,7 +18,7 @@ from updater import FacadeUpdater
 
 #from facade_dataset import FacadeDataset
 from data import Pix2pixDataset
-from facade_visualizer import out_image
+from data_vis import out_image
 
 def main():
     parser = argparse.ArgumentParser(description='chainer implementation of pix2pix')
@@ -69,13 +69,16 @@ def main():
     opt_dis = make_optimizer(dis)
 
     train_d = Pix2pixDataset(args.dataset)
+    test_d = Pix2pixDataset(args.dataset)
     train_iter = chainer.iterators.SerialIterator(train_d, args.batchsize)
+    test_iter = chainer.iterators.SerialIterator(test_d, args.batchsize)
 
     # Set up a trainer
     updater = FacadeUpdater(
         models=(enc, dec, dis),
         iterator={
-            'main': train_iter},
+            'main': train_iter,
+            'test': test_iter},
         optimizer={
             'enc': opt_enc, 'dec': opt_dec, 
             'dis': opt_dis},
@@ -98,6 +101,11 @@ def main():
         'epoch', 'iteration', 'enc/loss', 'dec/loss', 'dis/loss',
     ]), trigger=display_interval)
     trainer.extend(extensions.ProgressBar(update_interval=10))
+    trainer.extend(
+        out_image(
+            updater, enc, dec,
+            5, 5, args.seed, args.out),
+        trigger=snapshot_interval)
 
     if args.resume:
         # Resume from a snapshot
