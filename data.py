@@ -35,7 +35,7 @@ class Pix2pixDataset(dataset_mixin.DatasetMixin):
             img /= 255.0
             return img
         if self.cache:
-            if len(img) >= (i+1):
+            if len(self.images) >= (i+1):
                 img = _load(i)
             else:
                 img = self.images[i]
