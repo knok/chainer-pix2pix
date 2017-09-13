@@ -61,16 +61,13 @@ def out_image(updater, enc, dec, rows, cols, seed, dst):
                 os.makedirs(preview_dir)
             Image.fromarray(x, mode=mode).convert('RGB').save(preview_path)
         
-        x = np.asarray(np.clip(gen_all * 128 + 128, 0.0, 255.0), dtype=np.uint8)
+        x = np.asarray(np.clip(gen_all * 255, 0.0, 255.0), dtype=np.uint8)
         save_image(x, "gen")
-        
-        x = np.ones((n_images, 3, w_in, w_in)).astype(np.float32)*255
-        x[:,0,:,:] = 0
-        for i in range(3):
-            x[:,0,:,:] += in_all[:,i,:,:]
+
+        x = np.asarray(np.clip(in_all * 255, 0.0, 255.0), dtype=np.uint8)
         save_image(x, "in", mode='RGB')
         
-        x = np.asarray(np.clip(gt_all * 128+128, 0.0, 255.0), dtype=np.uint8)
+        x = np.asarray(np.clip(gt_all * 255, 0.0, 255.0), dtype=np.uint8)
         save_image(x, "gt")
         
     return make_image
