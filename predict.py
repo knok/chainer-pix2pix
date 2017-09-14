@@ -39,7 +39,7 @@ def main():
 
     # load image and predict
 
-    img = Image.open(args.input)
+    img = Image.open(args.input).convert('RGB')
     img = np.asarray(img).astype(np.float32)
     img /= 255.0
     img = img.transpose(2, 0, 1).reshape((1, 3, 256, 256))
