@@ -48,7 +48,7 @@ def main():
     z = enc(x)
     y = dec(z) # (batchsize, ch, width, height)
 
-    y = y.reshape(3, 256, 256).transpose(2, 1, 0)
+    y = y.data.reshape(3, 256, 256).transpose(2, 1, 0)
     import matplotlib.pyplot as plt
     plt.imshow(y)
     plt.show()
