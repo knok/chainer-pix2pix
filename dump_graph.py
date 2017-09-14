@@ -43,8 +43,8 @@ def main():
     z = enc(x)
     y = dec(z)
     graph = ChainerConverter().convert([x], [y])
-    exec_info = generate_descriptor("webassembly")
-    exec_info.save(args.out, graph)
+    exec_info = generate_descriptor("webassembly", graph)
+    exec_info.save(args.out)
 
 if __name__ == '__main__':
     main()
