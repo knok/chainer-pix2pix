@@ -58,7 +58,8 @@ class Encoder(chainer.Chain):
         return hs
 
 class Decoder(chainer.Chain):
-    def __init__(self, out_ch):
+    def __init__(self, out_ch, activation="tanh"):
+        self.activation = activation
         layers = {}
         w = chainer.initializers.Normal(0.02)
         layers['c0'] = CBR(512, 512, bn=True, sample='up', activation=F.relu, dropout=True)
@@ -79,11 +80,14 @@ class Decoder(chainer.Chain):
                 h = self['c%d'%i](h)
             else:
                 h = self.c7(h)
+        if self.activation == "tanh":
+            h = F.tanh(h)
         return h
 
     
 class Discriminator(chainer.Chain):
-    def __init__(self, in_ch, out_ch):
+    def __init__(self, in_ch, out_ch, activation="sigmoid"):
+        self.activation = activation
         layers = {}
         w = chainer.initializers.Normal(0.02)
         layers['c0_0'] = CBR(in_ch, 32, bn=False, sample='down', activation=F.leaky_relu, dropout=False)
@@ -101,4 +105,6 @@ class Discriminator(chainer.Chain):
         h = self.c3(h)
         h = self.c4(h)
         #h = F.average_pooling_2d(h, h.data.shape[2], 1, 0)
+        if self.activation == "sigmoid":
+            h = F.sigmoid(h)
         return h
