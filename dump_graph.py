@@ -44,7 +44,7 @@ def main():
     y = dec(z)
     graph = ChainerConverter().convert([x], [y])
     exec_info = generate_descriptor("webassembly")
-    exec_info.save(args.out)
+    exec_info.save(args.out, graph)
 
 if __name__ == '__main__':
     main()
