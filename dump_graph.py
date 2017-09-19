@@ -38,10 +38,11 @@ def main():
     chainer.serializers.load_npz(args.dec_npz, dec)
 
     # graph
-    input = np.zeros((1, 3, 256, 256), dtype=np.float32)
-    x = chainer.Variable(input)
-    z = enc(x)
-    y = dec(z)
+    with chainer.using_config('train', False):
+        input = np.zeros((1, 3, 256, 256), dtype=np.float32)
+        x = chainer.Variable(input)
+        z = enc(x)
+        y = dec(z)
     graph = ChainerConverter().convert([x], [y])
     exec_info = generate_descriptor("webassembly", graph)
     exec_info.save(args.out)
