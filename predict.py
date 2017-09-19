@@ -52,6 +52,9 @@ def main():
     import matplotlib.pyplot as plt
     plt.imshow(y)
     plt.show()
+    if False:
+        import scipy.misc
+        scipy.misc.imsave("output.png", y)
 
 if __name__ == '__main__':
     main()
