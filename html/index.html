@@ -3,10 +3,43 @@
 <html>
     <head>
 	<title>edges2cats with WebDNN</title>
+	<script src="./webdnn.js"></script>
+	<script language="JavaScript">
+	 function start() {
+             console.log("start");
+             var img = document.querySelector("#edge");
+             WebDNN.Image.getImageArray(img, { scale: [255, 255, 255], order: WebDNN.Image.Order.CHW}).then(function (img) {
+		 WebDNN.load("../out").then(function (runner) {
+		     console.log("runner called");
+		     var x = runner.getInputViews()[0];
+		     var y = runner.getOutputViews()[0];
+		     console.log(img)
+		     x.set(img);
+		     runner.run().then(function () {
+			 console.log("output");
+			 var ret = y.toActual();
+			 var cvs = document.querySelector("#output");
+			 var clip = [];
+			 console.log(ret);
+			 WebDNN.Image.setImageArrayToCanvas(ret, 256, 256, cvs, {
+			     scale: [256, 256, 256],
+			     bias: [0, 0, 0],
+			     color: WebDNN.Image.Color.RGB,
+			     order: WebDNN.Image.Order.CHW
+			 });
+		     });
+		 });
+             });
+	 }
+	</script>
     </head>
     <body>
 	<h1>edges2cats</h1>
+	<button type="button" name="btn" onClick="start()">
+	  push
+	</button>
 	<canvas id="input" width="256" height="256"></canvas>
 	<canvas id="output" width="256" height="256"></canvas>
+	<img id="edge" src="animal-861805__480.png">
     </body>
 </html>
