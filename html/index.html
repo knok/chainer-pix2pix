@@ -3,43 +3,41 @@
 <html>
     <head>
 	<title>edges2cats with WebDNN</title>
-	<script src="./webdnn.js"></script>
-	<script language="JavaScript">
-	 function start() {
-             console.log("start");
-             var img = document.querySelector("#edge");
-             WebDNN.Image.getImageArray(img, { scale: [255, 255, 255], order: WebDNN.Image.Order.CHW}).then(function (img) {
-		 WebDNN.load("../out").then(function (runner) {
-		     console.log("runner called");
-		     var x = runner.getInputViews()[0];
-		     var y = runner.getOutputViews()[0];
-		     console.log(img)
-		     x.set(img);
-		     runner.run().then(function () {
-			 console.log("output");
-			 var ret = y.toActual();
-			 var cvs = document.querySelector("#output");
-			 var clip = [];
-			 console.log(ret);
-			 WebDNN.Image.setImageArrayToCanvas(ret, 256, 256, cvs, {
-			     scale: [256, 256, 256],
-			     bias: [0, 0, 0],
-			     color: WebDNN.Image.Color.RGB,
-			     order: WebDNN.Image.Order.CHW
-			 });
-		     });
-		 });
-             });
-	 }
-	</script>
+	<link rel="stylesheet" type="text/css" href="index.css">
+	<script type="text/javascript" src="./webdnn.js"></script>
+	<script type="text/javascript" src="pix2pix.js"></script>
+	<script type="text/javascript" src="teledraw-canvas.js"></script>
     </head>
     <body>
 	<h1>edges2cats</h1>
-	<button type="button" name="btn" onClick="start()">
-	  push
-	</button>
+	<div class="app">
+	    <p id="status">Loading model...</p>
+	    <div id="prog-bar" class="progress">
+		<div class="progress-bar"></div>
+	    </div>
+	</div>
 	<canvas id="input" width="256" height="256"></canvas>
 	<canvas id="output" width="256" height="256"></canvas>
-	<img id="edge" src="animal-861805__480.png">
+	<!-- <img id="edge" src="animal-861805__480.png"> -->
+	<script>
+	 var c = new TeledrawCanvas("input");
+	 function clearWhite() {
+	     c.clear();
+	     c.ctx().fillStyle = "rgb(256, 256, 256)";
+	     c.ctx().fillRect(0, 0, 256, 256);
+	 }
+	 clearWhite();
+	 c.setStrokeSize(1);
+	</script>
+	<button id="inference" type="button" name="btn" onClick="start()">
+	    convert
+	</button>
+	<button id="pencil" type="button" name="btn" onClick="c.setTool('pencil')">pencil</button>
+	<button id="clear" type="button" name="btn" onClick="clearWhite()">clear</button>
+	<button id="preset" type="button" name="btn" onClick="set_image()">preset</button>
+	<script src="progress.js"></script>
+	<div id="calc">running inference
+	    <div id="sec"></div>
+	</div>
     </body>
 </html>
